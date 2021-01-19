@@ -105,7 +105,7 @@ function(conan_cmake_settings result)
         endif()
         if(${CMAKE_SYSTEM_NAME} STREQUAL "QNX")
             set(CONAN_SYSTEM_NAME Neutrino)
-        endif()        
+        endif()
         set(CONAN_SUPPORTED_PLATFORMS Windows Linux Macos Android iOS FreeBSD WindowsStore WindowsCE watchOS tvOS FreeBSD SunOS AIX Arduino Emscripten Neutrino)
         list (FIND CONAN_SUPPORTED_PLATFORMS "${CONAN_SYSTEM_NAME}" _index)
         if (${_index} GREATER -1)
@@ -246,7 +246,7 @@ function(conan_cmake_settings result)
         string(REGEX MATCH "[^=]*" MANUAL_SETTING "${ARG}")
         message(STATUS "Conan: ${MANUAL_SETTING} was added as an argument. Not using the autodetected one.")
         list(REMOVE_ITEM ARGUMENTS_PROFILE_AUTO "${MANUAL_SETTING}")
-    endforeach()    
+    endforeach()
 
     # Automatic from CMake
     foreach(ARG ${ARGUMENTS_PROFILE_AUTO})
@@ -457,7 +457,10 @@ function(conan_cmake_install)
     endif()
 
     if(NOT "${return_code}" STREQUAL "0")
-      message(FATAL_ERROR "Conan install failed='${return_code}'")
+        if(ARGUMENTS_OUTPUT_QUIET)
+            set( conan_output "\nConan output: ${conan_output}" )
+        endif()
+      message(FATAL_ERROR "Conan install failed='${return_code}'${conan_output}")
     endif()
 
 endfunction()
@@ -518,7 +521,7 @@ endmacro()
 
 macro(conan_cmake_run)
     conan_parse_arguments(${ARGV})
-    
+
     if(ARGUMENTS_CONFIGURATION_TYPES AND NOT CMAKE_CONFIGURATION_TYPES)
         message(WARNING "CONFIGURATION_TYPES should only be specified for multi-configuration generators")
     elseif(ARGUMENTS_CONFIGURATION_TYPES AND ARGUMENTS_BUILD_TYPE)
